@@ -1,0 +1,24 @@
+<div class="card" style="margin-bottom: 1rem;">
+    <div class="card-header">
+        <span class="card-title">Add Item</span>
+    </div>
+    <div class="card-body">
+        <form hx-post="{% url 'add_item' grocery_list.id %}"
+              hx-target="#item-list"
+              hx-swap="innerHTML">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div style="color: var(--red); font-size: 0.8rem; margin-top: 4px;">{{ field.errors.0 }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <div style="display: flex; gap: 8px; margin-top: 0.5rem;">
+                <button type="submit" class="btn btn-primary">Add to List</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+{% if grocery_item.product %}
+<li id="item-{{ grocery_item.id }}"
+    style="display: flex; align-items: center; justify-content: space-between; padding: 0.875rem 1.5rem; border-bottom: 1px solid var(--gray-200); transition: opacity 0.25s ease; {% if grocery_item.bought %}opacity: 0.45;{% endif %}">
+
+    <div style="display: flex; align-items: center; gap: 12px;">
+        <!-- Checkbox style toggle -->
+        <button hx-post="{% url 'toggle_item' grocery_item.id %}"
+                hx-target="#item-{{ grocery_item.id }}"
+                hx-swap="outerHTML"
+                style="width: 22px; height: 22px; border-radius: 6px; border: 2px solid {% if grocery_item.bought %}var(--green-light){% else %}var(--gray-200){% endif %}; background: {% if grocery_item.bought %}var(--green-light){% else %}transparent{% endif %}; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.18s ease;">
+            {% if grocery_item.bought %}
+            <span style="color: white; font-size: 13px;">✓</span>
+            {% endif %}
+        </button>
+
+        <div>
+            <span style="font-weight: 500; font-size: 0.9rem; {% if grocery_item.bought %}text-decoration: line-through; color: var(--gray-400);{% endif %}">
+                {{ grocery_item.product.name }}
+            </span>
+            <div style="font-size: 0.75rem; color: var(--gray-400); margin-top: 2px;">
+                {{ grocery_item.quantity }} {{ grocery_item.unit }}
+                {% if grocery_item.store %} · {{ grocery_item.store }}{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 6px;">
+        {% if not grocery_item.bought %}
+        <button hx-get="{% url 'edit_item' grocery_item.id %}"
+                hx-target="#item-{{ grocery_item.id }}"
+                hx-swap="outerHTML"
+                class="btn btn-ghost btn-sm">
+            Edit
+        </button>
+        {% endif %}
+    </div>
+
+</li>
+{% endif %}

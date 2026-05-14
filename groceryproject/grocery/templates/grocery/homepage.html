@@ -1,0 +1,103 @@
+{% extends 'grocery/base.html' %}
+{% block content %}
+
+<div style="display: flex; gap: 2rem; align-items: flex-start;">
+
+    <!-- LEFT COLUMN -->
+    <div style="flex: 2; display: flex; flex-direction: column; gap: 1.5rem;">
+
+        <!-- GROCERY LISTS -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"> Grocery Lists</span>
+                <a href="{% url 'create_list' %}" class="btn btn-primary btn-sm">+ New List</a>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                {% for item in lists %}
+                <a href="{% url 'list_detail' item.id %}" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; border-bottom: 1px solid var(--gray-200); text-decoration: none; color: inherit; transition: background 0.15s ease;">
+                    <div>
+                        <div style="font-weight: 500; font-size: 0.95rem;">{{ item.name }}</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-400); margin-top: 2px;">created by {{ item.created_by.username }}</div>
+                    </div>
+                    <span style="color: var(--gray-400); font-size: 1.2rem;">›</span>
+                </a>
+                {% empty %}
+                <div class="empty-state">
+                    <div style="font-size: 2rem;"></div>
+                    <p>No grocery lists yet. Create one!</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- RECIPES -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"> Recipes</span>
+                <a href="{% url 'create_recipe' %}" class="btn btn-secondary btn-sm">+ New Recipe</a>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                {% for recipe in recipe %}
+                <details style="border-bottom: 1px solid var(--gray-200);">
+                    <summary style="padding: 1rem 1.5rem; cursor: pointer; font-weight: 500; font-size: 0.95rem; list-style: none; display: flex; align-items: center; justify-content: space-between;">
+                        <span> {{ recipe.name }}</span>
+                        <span style="font-size: 0.75rem; color: var(--gray-400);">tap to expand ›</span>
+                    </summary>
+
+                    <div style="padding: 0 1.5rem 1rem; background: var(--gray-100);">
+
+                        <!-- Ingredients -->
+                        <div style="margin-bottom: 1rem;">
+                            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400); margin-bottom: 0.5rem; margin-top: 1rem;">Ingredients</div>
+                            <div id="ingredients-{{ recipe.id }}"
+                                 hx-get="{% url 'recipe_ingredients' recipe.id %}"
+                                 hx-trigger="toggle from:closest details"
+                                 hx-swap="innerHTML">
+                            </div>
+                        </div>
+
+                        <a href="{% url 'add_ingredient' recipe.id %}" class="btn btn-ghost btn-sm">+ Add Ingredient</a>
+
+                        <!-- Shopping list for this recipe -->
+                        {% if recipe.grocery_list %}
+                        <div style="margin-top: 1.25rem; border-top: 1px solid var(--gray-200); padding-top: 1rem;">
+                            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400); margin-bottom: 0.75rem;">Shopping List</div>
+                            {% for item in recipe.grocery_list.groceryitem_set.all %}
+                                {% include 'grocery/item.html' with grocery_item=item %}
+                            {% empty %}
+                                <p style="font-size: 0.85rem; color: var(--gray-400);">No items yet.</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                    </div>
+                </details>
+                {% empty %}
+                <div class="empty-state">
+                    <div style="font-size: 2rem;"></div>
+                    <p>No recipes yet. Create one!</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN — INVENTORY -->
+    <div style="flex: 1; position: sticky; top: 80px;">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"> Inventory</span>
+                <span class="badge badge-green">{{ inventory|length }} items</span>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <div id="inventory-list">
+                    {% include 'grocery/inventory.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

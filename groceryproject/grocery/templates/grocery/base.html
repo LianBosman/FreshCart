@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreshCart</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --green: #2d6a4f;
+            --green-light: #52b788;
+            --green-pale: #d8f3dc;
+            --cream: #fafaf7;
+            --white: #ffffff;
+            --gray-100: #f5f5f0;
+            --gray-200: #e8e8e0;
+            --gray-400: #9a9a90;
+            --gray-700: #3d3d38;
+            --red: #e63946;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--gray-700);
+            min-height: 100vh;
+        }
+
+        /* NAV */
+        nav {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 0 2rem;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--green);
+            letter-spacing: -0.5px;
+        }
+
+        .nav-brand span {
+            color: var(--green-light);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.18s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-primary:hover { background: #235c42; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+        .btn-secondary {
+            background: var(--green-pale);
+            color: var(--green);
+        }
+
+        .btn-secondary:hover { background: #c7ecd0; }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--gray-400);
+            border: 1px solid var(--gray-200);
+        }
+
+        .btn-ghost:hover { background: var(--gray-100); color: var(--gray-700); }
+
+        .btn-danger {
+            background: #ffeaea;
+            color: var(--red);
+        }
+
+        .btn-danger:hover { background: #ffd6d6; }
+
+        .btn-sm {
+            padding: 5px 11px;
+            font-size: 0.8rem;
+        }
+
+        .btn-logout {
+            background: transparent;
+            color: var(--gray-400);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            padding: 6px 14px;
+            transition: all 0.18s ease;
+        }
+
+        .btn-logout:hover { border-color: var(--red); color: var(--red); background: #fff5f5; }
+
+        /* MAIN LAYOUT */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* CARDS */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius);
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .card-body { padding: 1.25rem 1.5rem; }
+
+        /* FORMS */
+        .form-group { margin-bottom: 1rem; }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            color: var(--gray-700);
+            background: var(--white);
+            transition: border-color 0.18s ease, box-shadow 0.18s ease;
+            outline: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--green-light);
+            box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.15);
+        }
+
+        /* MESSAGES */
+        .messages { padding: 0 2rem; margin-top: 1rem; }
+        .message {
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+            font-size: 0.875rem;
+            background: var(--green-pale);
+            color: var(--green);
+            border-left: 3px solid var(--green-light);
+        }
+
+        /* HTMX TRANSITIONS */
+        div[id^="item-"] { transition: opacity 0.25s ease; }
+        .htmx-swapping { opacity: 0; transition: opacity 0.2s ease; }
+
+        /* BADGES */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-green { background: var(--green-pale); color: var(--green); }
+        .badge-gray { background: var(--gray-100); color: var(--gray-400); }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--gray-400);
+        }
+
+        .empty-state p { font-size: 0.9rem; margin-top: 0.5rem; }
+    </style>
+</head>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+
+    <nav>
+        <div class="nav-brand">Fresh<span>Cart</span></div>
+        <div class="nav-actions">
+            {% if user.is_authenticated %}
+                <span style="font-size:0.875rem; color: var(--gray-400);"> {{ user.username }}</span>
+                <form method="post" action="/accounts/logout/" style="margin:0;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-logout">Logout</button>
+                </form>
+            {% endif %}
+        </div>
+    </nav>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="main-container">
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+</html>

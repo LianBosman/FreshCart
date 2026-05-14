@@ -1,0 +1,22 @@
+{% for item in inventory %}
+<div id="inventory-item-{{ item.id }}"
+     style="display: flex; align-items: center; justify-content: space-between; padding: 0.875rem 1.5rem; border-bottom: 1px solid var(--gray-200);">
+    <div>
+        <div style="font-weight: 500; font-size: 0.875rem;">{{ item.product.name }}</div>
+        <div style="font-size: 0.75rem; color: var(--gray-400); margin-top: 2px;">
+            {{ item.quantity }} {{ item.unit }} · {{ item.grocery_list.name }}
+        </div>
+    </div>
+    <button hx-get="{% url 'use_item' item.id %}"
+            hx-target="#inventory-item-{{ item.id }}"
+            hx-swap="innerHTML"
+            class="btn btn-danger btn-sm">
+        Used
+    </button>
+</div>
+{% empty %}
+<div class="empty-state">
+    <div style="font-size: 2rem;"></div>
+    <p>Nothing in inventory yet.</p>
+</div>
+{% endfor %}

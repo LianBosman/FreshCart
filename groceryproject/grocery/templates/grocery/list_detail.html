@@ -1,0 +1,63 @@
+{% extends 'grocery/base.html' %}
+{% block content %}
+
+<div style="max-width: 700px; margin: 0 auto;">
+
+    <!-- Header -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+        <div>
+            <a href="/" style="font-size: 0.8rem; color: var(--gray-400); text-decoration: none;">← Back to lists</a>
+            <h1 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--gray-700); margin-top: 4px;">{{ grocery_list.name }}</h1>
+        </div>
+        <button class="btn btn-primary"
+                hx-get="{% url 'add_item' grocery_list.id %}"
+                hx-target="#add-item-form"
+                hx-swap="innerHTML">
+            + Add Item
+        </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="card" style="margin-bottom: 1.5rem;">
+        <div class="card-body" style="padding: 1rem 1.5rem;">
+            <form hx-get="{% url 'filter_items' grocery_list.id %}"
+                  hx-target="#item-list"
+                  hx-swap="innerHTML"
+                  hx-trigger="change from:select"
+                  style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <label style="margin: 0; white-space: nowrap;">Status</label>
+                    <select name="filter" style="width: auto; padding: 6px 12px;">
+                        <option value="">All</option>
+                        <option value="bought">Bought</option>
+                        <option value="unbought">Unbought</option>
+                    </select>
+                </div>
+                {% if stores %}
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <label style="margin: 0; white-space: nowrap;">Store</label>
+                    <select name="store" style="width: auto; padding: 6px 12px;">
+                        <option value="">All stores</option>
+                        {% for store in stores %}
+                        <option value="{{ store }}">{{ store }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <!-- Add item form slot -->
+    <div id="add-item-form" style="margin-bottom: 1rem;"></div>
+
+    <!-- Items -->
+    <div class="card">
+        <ul id="item-list" style="list-style: none; padding: 0; margin: 0;">
+            {% include 'grocery/item_list.html' %}
+        </ul>
+    </div>
+
+</div>
+
+{% endblock %}

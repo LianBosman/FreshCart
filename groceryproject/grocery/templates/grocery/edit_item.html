@@ -1,0 +1,24 @@
+<li id="item-{{ item.id }}" style="padding: 0.875rem 1.5rem; border-bottom: 1px solid var(--gray-200); background: var(--green-pale);">
+    <form method="post"
+          action="{% url 'edit_item' item.id %}"
+          hx-post="{% url 'edit_item' item.id %}"
+          hx-target="#item-{{ item.id }}"
+          hx-swap="outerHTML"
+          style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        {% csrf_token %}
+        {% for field in form %}
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+            <label style="font-size: 0.7rem;">{{ field.label }}</label>
+            {{ field }}
+        </div>
+        {% endfor %}
+        <div style="display: flex; gap: 6px; align-items: flex-end; padding-top: 18px;">
+            <button type="submit" class="btn btn-primary btn-sm">Save</button>
+            <button type="button"
+                    hx-get="{% url 'edit_item' item.id %}"
+                    hx-target="#item-{{ item.id }}"
+                    hx-swap="outerHTML"
+                    class="btn btn-ghost btn-sm">Cancel</button>
+        </div>
+    </form>
+</li>

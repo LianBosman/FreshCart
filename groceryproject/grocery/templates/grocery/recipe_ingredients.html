@@ -1,0 +1,8 @@
+{% for recipeingredient in recipeingredients %}
+<div style="display: flex; align-items: center; gap: 8px; padding: 6px 0;">
+    <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--green-light); display: inline-block; flex-shrink: 0;"></span>
+    <span style="font-size: 0.875rem;"><strong>{{ recipeingredient.product.name }}</strong> — {{ recipeingredient.quantity }} {{ recipeingredient.unit }}</span>
+</div>
+{% empty %}
+<p style="font-size: 0.85rem; color: var(--gray-400);">No ingredients added yet.</p>
+{% endfor %}

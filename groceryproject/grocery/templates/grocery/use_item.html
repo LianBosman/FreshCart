@@ -1,0 +1,16 @@
+<form method="post"
+      action="{% url 'use_item' item.id %}"
+      hx-post="{% url 'use_item' item.id %}"
+      hx-target="#inventory-list"
+      hx-swap="innerHTML"
+      style="display: flex; align-items: flex-end; gap: 8px; flex-wrap: wrap; padding: 0.5rem 0;">
+    {% csrf_token %}
+    <div>
+        <label style="font-size: 0.7rem; color: var(--gray-400); display: block; margin-bottom: 4px;">
+            How many {{ item.unit }} of {{ item.product.name }} used? (have {{ item.quantity }}{{ item.unit }})
+        </label>
+        {{ form.quantity_used }}
+    </div>
+    <button type="submit" class="btn btn-danger btn-sm">Confirm</button>
+    <button type="button" onclick="window.location.reload()" class="btn btn-ghost btn-sm">Cancel</button>
+</form>
