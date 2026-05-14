@@ -1,4 +1,4 @@
-# FreshCart 🛒
+# FreshCart 
 
 A shared family grocery and recipe management app. Create lists, track bought items, manage inventory, and plan meals with recipes — all in real time. Built with Django and HTMX.
 
