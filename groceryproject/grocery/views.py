@@ -25,6 +25,13 @@ def list_detail(request, id):
 def toggle_item(request, id):
     grocery_item= GroceryItem.objects.get(id=id)
     grocery_item.bought= not grocery_item.bought
+
+    if grocery_item.bought:
+        grocery_item.remaining_quantity = grocery_item.quantity
+    
+    else:
+        grocery_item.remaining_quantity = None
+    
     grocery_item.save()
     return render(request, 'grocery/item.html',{'grocery_item': grocery_item})
 
@@ -195,30 +202,43 @@ def delete_item(request, id):
     item.delete()
     inventory = GroceryItem.objects.filter(bought=True, used=False)
     return render(request, 'grocery/inventory.html', {'inventory': inventory})
-
 @login_required
 def use_item(request, id):
     item = GroceryItem.objects.get(id=id)
     if request.method == 'POST':
-        print("POST received")
-        print(request.POST)
         form = UseItemForm(request.POST)
         if form.is_valid():
             quantity_used = form.cleaned_data.get('quantity_used')
-            # unit conversion
-            item_qty = item.quantity
+            
+            # unit conversion for remaining
+            remaining_qty = item.remaining_quantity
             if item.unit == 'kg' and quantity_used:
-                item_qty = item_qty * 1000  # convert to grams
-            remaining = item_qty - quantity_used
-            if remaining <= 0:
-                item.delete()
+                remaining_qty = remaining_qty * 1000
+                quantity_used_converted = quantity_used
             else:
-                if item.unit == 'kg':
-                    item.quantity = remaining / 1000  # convert back
+                quantity_used_converted = quantity_used
+            
+            remaining = remaining_qty - quantity_used_converted
+            
+            if item.unit == 'kg':
+                remaining = remaining / 1000
+
+            if remaining <= 0:
+                if item.grocery_list.is_recipe_list:
+                    # reset for recipe items
+                    item.bought = False
+                    item.remaining_quantity = None
+                    item.save()
                 else:
-                    item.quantity = remaining
+                    item.delete()
+            else:
+                
+                print(f"quantity: {item.quantity}")
+                print(f"remaining: {remaining}")
+                item.remaining_quantity = remaining
                 item.save()
-            inventory = GroceryItem.objects.filter(bought=True, used=False)
+
+            inventory = GroceryItem.objects.filter(bought=True, used=False, grocery_list__is_recipe_list=False)
             return render(request, 'grocery/inventory.html', {'inventory': inventory})
     else:
         form = UseItemForm()

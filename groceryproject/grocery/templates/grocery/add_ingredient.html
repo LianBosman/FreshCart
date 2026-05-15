@@ -3,15 +3,12 @@
 
 {% block content %}
 
-<form method="post">
+<form method="post" action="{% url 'add_ingredient' recipe.id %}">
 
     {% csrf_token %}
 
     {{ form.as_p}}
-
-    <button type="submit">
-        Add Ingredient
-    </button>
+<button type="submit" class="btn btn-primary">Add Ingredient</button>
 </form>
 
 {% endblock %}

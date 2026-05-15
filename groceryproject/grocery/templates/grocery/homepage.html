@@ -56,7 +56,12 @@
                             </div>
                         </div>
 
-                        <a href="{% url 'add_ingredient' recipe.id %}" class="btn btn-ghost btn-sm">+ Add Ingredient</a>
+                        <div id="add-ingredient-{{ recipe.id }}">
+                        <button hx-get="{% url 'add_ingredient' recipe.id %}"
+                        hx-target="#add-ingredient-{{ recipe.id }}"
+                        hx-swap="innerHTML"
+                        class="btn btn-ghost btn-sm">+ Add Ingredient</button>
+                        </div>
 
                         <!-- Shopping list for this recipe -->
                         {% if recipe.grocery_list %}

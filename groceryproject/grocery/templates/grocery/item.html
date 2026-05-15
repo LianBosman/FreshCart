@@ -3,7 +3,6 @@
     style="display: flex; align-items: center; justify-content: space-between; padding: 0.875rem 1.5rem; border-bottom: 1px solid var(--gray-200); transition: opacity 0.25s ease; {% if grocery_item.bought %}opacity: 0.45;{% endif %}">
 
     <div style="display: flex; align-items: center; gap: 12px;">
-        <!-- Checkbox style toggle -->
         <button hx-post="{% url 'toggle_item' grocery_item.id %}"
                 hx-target="#item-{{ grocery_item.id }}"
                 hx-swap="outerHTML"
@@ -15,12 +14,14 @@
 
         <div>
             <span style="font-weight: 500; font-size: 0.9rem; {% if grocery_item.bought %}text-decoration: line-through; color: var(--gray-400);{% endif %}">
-                {{ grocery_item.product.name }}
-            </span>
-            <div style="font-size: 0.75rem; color: var(--gray-400); margin-top: 2px;">
-                {{ grocery_item.quantity }} {{ grocery_item.unit }}
+                {{ grocery_item.quantity }} {{ grocery_item.unit }} {{ grocery_item.product.name }}
                 {% if grocery_item.store %} · {{ grocery_item.store }}{% endif %}
+            </span>
+            {% if grocery_item.bought and grocery_item.remaining_quantity is not None and grocery_item.remaining_quantity != grocery_item.quantity %}
+            <div style="font-size: 0.75rem; color: var(--green); margin-top: 2px;">
+                {{ grocery_item.remaining_quantity }} {{ grocery_item.unit }} remaining
             </div>
+            {% endif %}
         </div>
     </div>
 

@@ -37,7 +37,7 @@ class GroceryItem(models.Model):
     quantity=models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
     unit=models.CharField(choices=UNIT_CHOICES, max_length=10, null=True, blank=True)
     used=models.BooleanField(default=False)
-
+    remaining_quantity=models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
 
     def __str__(self):
         return self.product.name if self.product else 'Unknown'

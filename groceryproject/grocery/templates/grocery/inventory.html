@@ -6,6 +6,11 @@
         <div style="font-size: 0.75rem; color: var(--gray-400); margin-top: 2px;">
             {{ item.quantity }} {{ item.unit }} · {{ item.grocery_list.name }}
         </div>
+        {% if item.remaining_quantity is not None and item.remaining_quantity != item.quantity %}
+        <div style="font-size: 0.75rem; color: var(--green); margin-top: 2px;">
+            {{ item.remaining_quantity }} {{ item.unit }} remaining
+        </div>
+        {% endif %}
     </div>
     <button hx-get="{% url 'use_item' item.id %}"
             hx-target="#inventory-item-{{ item.id }}"
@@ -16,7 +21,6 @@
 </div>
 {% empty %}
 <div class="empty-state">
-    <div style="font-size: 2rem;"></div>
     <p>Nothing in inventory yet.</p>
 </div>
 {% endfor %}
