@@ -1,0 +1,103 @@
+{% extends 'grocery/base.html' %}
+{% block content %}
+
+<div style="margin-bottom: 2rem;">
+    <h1 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--gray-700);">Admin Dashboard</h1>
+    <p style="color: var(--gray-400); margin-top: 4px;">Manage users and monitor activity</p>
+</div>
+
+<!-- USERS -->
+<div class="card" style="margin-bottom: 2rem;">
+    <div class="card-header">
+        <span class="card-title">Users</span>
+        <span class="badge badge-green">{{ users|length }} total</span>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: var(--gray-100);">
+                    <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400);">Username</th>
+                    <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400);">Joined</th>
+                    <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400);">Lists</th>
+                    <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400);">Items Added</th>
+                    <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400);">Staff</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr style="border-bottom: 1px solid var(--gray-200);">
+                    <td style="padding: 0.875rem 1.5rem; font-weight: 500; font-size: 0.9rem;">{{ user.username }}</td>
+                    <td style="padding: 0.875rem 1.5rem; font-size: 0.85rem; color: var(--gray-400);">{{ user.date_joined|date:"d M Y" }}</td>
+                    <td style="padding: 0.875rem 1.5rem; font-size: 0.85rem;">{{ user.grocerylist_set.count }}</td>
+                    <td style="padding: 0.875rem 1.5rem; font-size: 0.85rem;">{{ user.grocerylist_set.all|length }}</td>
+                    <td style="padding: 0.875rem 1.5rem;">
+                        {% if user.is_staff %}
+                        <span class="badge badge-green">Staff</span>
+                        {% else %}
+                        <span class="badge badge-gray">User</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- RECENT ACTIVITY -->
+<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
+
+    <!-- Recent Lists -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Recent Lists</span>
+        </div>
+        <div class="card-body" style="padding: 0;">
+            {% for list in recent_lists %}
+            <div style="padding: 0.875rem 1.5rem; border-bottom: 1px solid var(--gray-200);">
+                <div style="font-weight: 500; font-size: 0.875rem;">{{ list.name }}</div>
+                <div style="font-size: 0.75rem; color: var(--gray-400); margin-top: 2px;">by {{ list.created_by.username }} · {{ list.date_created|date:"d M Y" }}</div>
+            </div>
+            {% empty %}
+            <div class="empty-state"><p>No lists yet.</p></div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Recent Items -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Recent Items</span>
+        </div>
+        <div class="card-body" style="padding: 0;">
+            {% for item in recent_items %}
+            <div style="padding: 0.875rem 1.5rem; border-bottom: 1px solid var(--gray-200);">
+                <div style="font-weight: 500; font-size: 0.875rem;">{{ item.product.name }}</div>
+                <div style="font-size: 0.75rem; color: var(--gray-400); margin-top: 2px;">{{ item.quantity }} {{ item.unit }} · {{ item.grocery_list.name }}</div>
+            </div>
+            {% empty %}
+            <div class="empty-state"><p>No items yet.</p></div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Recent Recipes -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Recent Recipes</span>
+        </div>
+        <div class="card-body" style="padding: 0;">
+            {% for recipe in recent_recipes %}
+            <div style="padding: 0.875rem 1.5rem; border-bottom: 1px solid var(--gray-200);">
+                <div style="font-weight: 500; font-size: 0.875rem;">{{ recipe.name }}</div>
+                <div style="font-size: 0.75rem; color: var(--gray-400); margin-top: 2px;">by {{ recipe.created_by.username }}</div>
+            </div>
+            {% empty %}
+            <div class="empty-state"><p>No recipes yet.</p></div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
