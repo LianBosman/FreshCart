@@ -204,9 +204,9 @@
                 {% if user.is_staff %}
                 <a href="{% url 'dashboard' %}" class="btn btn-ghost btn-sm">Dashboard</a>
                 {% endif %}
-                <span style="font-size:0.875rem; color: var(--gray-400);">{{ user.username }}</span>
+               
                 <form method="post" action="/accounts/logout/" style="margin:0;">
-                    {% csrf_token %}
+                    {% csrf_token %} 
                     <button type="submit" class="btn-logout">Logout</button>
                 </form>
             {% endif %}

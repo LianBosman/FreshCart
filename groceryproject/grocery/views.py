@@ -7,6 +7,7 @@ from .models import GroceryList, GroceryItem, Product,Recipe,RecipeIngredients
 from django.contrib import messages
 from django.http import HttpResponse
 from django.contrib.auth.models import User
+from django.db.models import Count
 
 @login_required
 def homepage(request):
@@ -271,12 +272,14 @@ def edit_item(request, id):
         })
     return render(request, 'grocery/edit_item.html', {'form': form, 'item': item})
 
-
 @login_required
 def dashboard(request):
     if not request.user.is_staff:
         return redirect('/')
-    users = User.objects.all().order_by('-date_joined')
+    users = User.objects.annotate(
+        list_count=Count('grocerylist', distinct=True),
+        recipe_count=Count('recipe', distinct=True)
+    ).order_by('-date_joined')
     recent_lists = GroceryList.objects.filter(is_recipe_list=False).order_by('-date_created')[:5]
     recent_items = GroceryItem.objects.all().order_by('-date_added')[:5]
     recent_recipes = Recipe.objects.all().order_by('-id')[:5]
@@ -286,3 +289,19 @@ def dashboard(request):
         'recent_items': recent_items,
         'recent_recipes': recent_recipes,
     })
+@login_required
+def dashboard_delete_list(request, id):
+    if not request.user.is_staff:
+        return redirect('/')
+    grocery_list = GroceryList.objects.get(id=id)
+    grocery_list.delete()
+    return redirect('dashboard')
+
+@login_required
+def toggle_user(request, id):
+    if not request.user.is_staff:
+        return redirect('/')
+    user = User.objects.get(id=id)
+    user.is_active = not user.is_active
+    user.save()
+    return redirect('dashboard')

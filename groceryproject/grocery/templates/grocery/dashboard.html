@@ -19,8 +19,10 @@
                     <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400);">Username</th>
                     <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400);">Joined</th>
                     <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400);">Lists</th>
-                    <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400);">Items Added</th>
-                    <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400);">Staff</th>
+                    <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400);">Recipes</th>
+                    <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400);">Role</th>
+                    <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400);">Status</th>
+                    <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400);">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -28,13 +30,29 @@
                 <tr style="border-bottom: 1px solid var(--gray-200);">
                     <td style="padding: 0.875rem 1.5rem; font-weight: 500; font-size: 0.9rem;">{{ user.username }}</td>
                     <td style="padding: 0.875rem 1.5rem; font-size: 0.85rem; color: var(--gray-400);">{{ user.date_joined|date:"d M Y" }}</td>
-                    <td style="padding: 0.875rem 1.5rem; font-size: 0.85rem;">{{ user.grocerylist_set.count }}</td>
-                    <td style="padding: 0.875rem 1.5rem; font-size: 0.85rem;">{{ user.grocerylist_set.all|length }}</td>
+                    <td style="padding: 0.875rem 1.5rem; font-size: 0.85rem;">{{ user.list_count }}</td>
+                    <td style="padding: 0.875rem 1.5rem; font-size: 0.85rem;">{{ user.recipe_count }}</td>
                     <td style="padding: 0.875rem 1.5rem;">
                         {% if user.is_staff %}
                         <span class="badge badge-green">Staff</span>
                         {% else %}
                         <span class="badge badge-gray">User</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.875rem 1.5rem;">
+                        {% if user.is_active %}
+                        <span class="badge badge-green">Active</span>
+                        {% else %}
+                        <span class="badge badge-gray">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.875rem 1.5rem;">
+                        {% if user != request.user %}
+                        <a href="{% url 'toggle_user' user.id %}"
+                           onclick="return confirm('Are you sure you want to {% if user.is_active %}deactivate{% else %}activate{% endif %} {{ user.username }}?')"
+                           class="btn btn-ghost btn-sm">
+                            {% if user.is_active %}Deactivate{% else %}Activate{% endif %}
+                        </a>
                         {% endif %}
                     </td>
                 </tr>
@@ -54,9 +72,14 @@
         </div>
         <div class="card-body" style="padding: 0;">
             {% for list in recent_lists %}
-            <div style="padding: 0.875rem 1.5rem; border-bottom: 1px solid var(--gray-200);">
-                <div style="font-weight: 500; font-size: 0.875rem;">{{ list.name }}</div>
-                <div style="font-size: 0.75rem; color: var(--gray-400); margin-top: 2px;">by {{ list.created_by.username }} · {{ list.date_created|date:"d M Y" }}</div>
+            <div style="padding: 0.875rem 1.5rem; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <div style="font-weight: 500; font-size: 0.875rem;">{{ list.name }}</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-400); margin-top: 2px;">by {{ list.created_by.username }} · {{ list.date_created|date:"d M Y" }}</div>
+                </div>
+                <a href="{% url 'dashboard_delete_list' list.id %}"
+                   onclick="return confirm('Are you sure you want to delete {{ list.name }}?')"
+                   class="btn btn-danger btn-sm">Delete</a>
             </div>
             {% empty %}
             <div class="empty-state"><p>No lists yet.</p></div>

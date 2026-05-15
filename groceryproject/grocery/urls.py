@@ -18,5 +18,8 @@ urlpatterns=[
         path('items/<int:id>/use/',views.use_item,name='use_item'),
         path('items/<int:id>/edit/',views.edit_item,name='edit_item'),
         path('dashboard/',views.dashboard, name='dashboard'),
+        path('dashboard/delete-list/<int:id>/', views.dashboard_delete_list, name='dashboard_delete_list'),
+        path('dashboard/toggle-user/<int:id>/', views.toggle_user, name='toggle_user'),
+
     
 ]
